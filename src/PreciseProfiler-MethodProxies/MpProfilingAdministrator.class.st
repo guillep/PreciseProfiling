@@ -58,7 +58,7 @@ MpProfilingAdministrator >> generateMethodList [
 MpProfilingAdministrator >> generateNodeTree [
 	"Generates a tree of method contexts based on the registered stacks"
 	rootNode := PreciseRoot new
-		childNodeClass: PreciseMemoryNode.
+		childNodeClass: PreciseNode.
 	stacks do: [ :stack | | currentNode |
 		currentNode := rootNode.
 		stack context allButFirst reverseDo: [ :method |
@@ -92,24 +92,31 @@ MpProfilingAdministrator >> runOn: aBlock [
 	"Profile a block of code with self-propagating method proxies (MpProfilingHandler). The proxies
 	that have registered activities will then be analyzed to extrapolate informations on the
 	block's execution"
+
 	| proxies |
-	proxies := initialMethods collect: [ :method | MpMethodProxy
-		onMethod: method
-		handler: MpProfilingHandler new ].
-	[ proxies do: [ :proxy | proxy install ].
-	aBlock value.
-	MpMethodProxy allInstancesDo: [ :proxy | proxy uninstall ] ] valueUninterruptably .
-	MpProfilingHandler allInstances 
+	proxies := initialMethods collect: [ :method |
+		           MpMethodProxy
+			           onMethod: method
+			           handler: MpProfilingHandler new ].
+	[
+	[
+	proxies do: [ :proxy | proxy install ].
+	aBlock value ] ensure: [
+		MpMethodProxy allInstancesDo: [ :proxy | proxy uninstall ] ] ]
+		valueUninterruptably.
+	MpProfilingHandler allInstances
 		select: [ :handler | handler count > 0 ]
-		thenDo: [ :handler | | convertedStacks |
+		thenDo: [ :handler |
+			| convertedStacks |
 			convertedStacks := handler convertStacks.
 			originalStacks addAll: convertedStacks.
 			stacks addAll: convertedStacks keys.
 			handler count: 0 ].
-	stacks := stacks select: [ :stack | initialMethods includes: stack context last ].
+	stacks := stacks select: [ :stack |
+		          initialMethods includes: stack context last ].
 	stacks sort.
 	self generateMethodList.
-	self generateNodeTree.
+	self generateNodeTree
 ]
 
 { #category : #accessing }
