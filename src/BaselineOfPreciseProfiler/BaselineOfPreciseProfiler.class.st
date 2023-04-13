@@ -8,14 +8,15 @@ Class {
 BaselineOfPreciseProfiler >> baseline: spec [
 
 	<baseline>
-	spec for: #common do: [ "		spec package: 'Champollion-Core'.
+	spec for: #common do: [ 
+		spec package: 'Champollion-Core'.
 		spec
 			package: 'Champollion-Tests'
 			with: [ spec requires: #( 'Champollion-Core' ) ].
-"
+
 		spec
 			package: 'PreciseProfiler'
-			with: [ "spec requires: #( 'Champollion-Core' )" ].
+			with: [ spec requires: #( 'Champollion-Core' ) ].
 
 		spec
 			baseline: 'MethodProxies'
