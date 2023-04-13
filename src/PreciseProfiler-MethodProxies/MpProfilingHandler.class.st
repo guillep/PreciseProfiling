@@ -15,6 +15,7 @@ Class {
 	#name : #MpProfilingHandler,
 	#superclass : #MpHandler,
 	#instVars : [
+		'administrator',
 		'count',
 		'stacks',
 		'stacksDict'
@@ -35,7 +36,6 @@ MpProfilingHandler >> beforeMethod [
 	"Increments the method call count and propagates the handlers to the methods that could 
 	potentially be called by this method"
 
-	proxy isActiveInExecutionStack traceCr.
 	self count: self count + 1.
 	
 	"Only do instrumentation once"
