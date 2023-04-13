@@ -83,7 +83,7 @@ MpProfilingHandler >> initialize [
 MpProfilingHandler >> instrumentImplementorsOf: potentialSelector [
 	"Add a MpProfilingHandler to the methods that could potentially be called by this method."
 	potentialSelector implementors
-		select: [ :method | method class == CompiledMethod ] 
+		select: [ :method | (method methodClass >> potentialSelector) class == CompiledMethod ] 
 		thenDo: [ :method | | newProxy |
 			newProxy := MpMethodProxy onMethod: method handler: self class new.
 			newProxy ifNotNil: [ newProxy install ].
