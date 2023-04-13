@@ -37,7 +37,7 @@ PreciseInterpreterPresenter class >> openOn: aPreciseInterpreter [
 	^ self basicNew
 		interpreter: aPreciseInterpreter;
 		initialize;
-		openWithSpec.
+		open.
 ]
 
 { #category : #accessing }
